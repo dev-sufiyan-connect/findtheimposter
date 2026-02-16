@@ -81,6 +81,7 @@ const List<String> secretWords = [
   'Resort',
   'Hotel',
   'Tea Stall',
+  'Kerala Tourism',
 
   // Social Media / Trending
   'Instagram',
