@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../providers/game_provider.dart';
+import '../providers/app_settings_provider.dart';
 import 'reveal_screen.dart';
+import 'settings_screen.dart';
 
 class PlayerSetupScreen extends ConsumerStatefulWidget {
   const PlayerSetupScreen({super.key});
@@ -97,7 +99,14 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
                 ),
           ),
           const Spacer(),
-          const SizedBox(width: 48),
+          IconButton(
+            icon: const Icon(Icons.settings_rounded, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -418,7 +427,10 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
       child: FilledButton(
         onPressed: canStart
             ? () {
-                ref.read(gameProvider.notifier).startGame();
+                final settings = ref.read(appSettingsProvider);
+                ref
+                    .read(gameProvider.notifier)
+                    .startGame(language: settings.language, imposterCount: settings.imposterCount);
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (_) => const RevealScreen()),
                 );

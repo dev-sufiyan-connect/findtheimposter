@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/app_theme.dart';
 import 'player_setup_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -31,6 +32,8 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 const Spacer(flex: 2),
                 _buildStartButton(context),
+                const SizedBox(height: 12),
+                _buildSettingsButton(context),
                 const Spacer(flex: 2),
               ],
             ),
@@ -175,6 +178,26 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsButton(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+        );
+      },
+      icon: const Icon(Icons.settings_rounded, size: 20),
+      label: const Text('Settings'),
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.black.withValues(alpha: 0.10),
+        foregroundColor: Colors.white70,
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.22), width: 2),
       ),
     );
   }

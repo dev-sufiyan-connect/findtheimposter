@@ -19,10 +19,11 @@ class _GameSummaryScreenState extends ConsumerState<GameSummaryScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(gameProvider);
     final players = state.players;
-    final imposterIndex = state.imposterIndex;
-    final imposterName = imposterIndex != null && imposterIndex < players.length
-        ? players[imposterIndex]
-        : null;
+    final imposterIndices = state.imposterIndices;
+    final imposterNames = imposterIndices
+        .where((i) => i >= 0 && i < players.length)
+        .map((i) => players[i])
+        .toList();
 
     return Scaffold(
       body: Container(
@@ -46,19 +47,19 @@ class _GameSummaryScreenState extends ConsumerState<GameSummaryScreen> {
                         _buildWoodenBoard(
                           context,
                           players: players,
-                          imposterIndex: imposterIndex,
+                          imposterIndices: imposterIndices,
                           imposterRevealed: _imposterRevealed,
-                          imposterName: imposterName,
+                          imposterNames: imposterNames,
                           onRevealImposter: () => setState(() => _imposterRevealed = true),
                         ),
                         const SizedBox(height: 24),
                         if (!_imposterRevealed)
-                          _buildRevealImposterButton(context)
-                        else if (imposterName != null)
+                          _buildRevealImposterButton(context, imposterNames.length)
+                        else if (imposterNames.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 16),
                             child: Text(
-                              'The Imposter was $imposterName',
+                              _buildImposterWasText(imposterNames),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: AppTheme.startGameGlow,
@@ -128,9 +129,9 @@ class _GameSummaryScreenState extends ConsumerState<GameSummaryScreen> {
   Widget _buildWoodenBoard(
     BuildContext context, {
     required List<String> players,
-    required int? imposterIndex,
+    required List<int> imposterIndices,
     required bool imposterRevealed,
-    required String? imposterName,
+    required List<String> imposterNames,
     required VoidCallback onRevealImposter,
   }) {
     return Container(
@@ -159,7 +160,7 @@ class _GameSummaryScreenState extends ConsumerState<GameSummaryScreen> {
           const SizedBox(height: 16),
           ...List.generate(players.length, (index) {
             final name = players[index];
-            final isImposter = index == imposterIndex && imposterRevealed;
+            final isImposter = imposterIndices.contains(index) && imposterRevealed;
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Container(
@@ -228,7 +229,16 @@ class _GameSummaryScreenState extends ConsumerState<GameSummaryScreen> {
     );
   }
 
-  Widget _buildRevealImposterButton(BuildContext context) {
+  String _buildImposterWasText(List<String> imposterNames) {
+    if (imposterNames.isEmpty) return '';
+    if (imposterNames.length == 1) {
+      return 'The Imposter was ${imposterNames.first}';
+    }
+    return 'The Imposters were ${imposterNames.join(', ')}';
+  }
+
+  Widget _buildRevealImposterButton(BuildContext context, int imposterCount) {
+    final buttonText = imposterCount <= 1 ? 'Reveal Imposter' : 'Reveal Imposters';
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -242,8 +252,8 @@ class _GameSummaryScreenState extends ConsumerState<GameSummaryScreen> {
       child: OutlinedButton.icon(
         onPressed: () => setState(() => _imposterRevealed = true),
         icon: const Icon(Icons.visibility_rounded, size: 22, color: AppTheme.addPlayerBlue),
-        label: const Text(
-          'Reveal Imposter',
+        label: Text(
+          buttonText,
           style: TextStyle(
             color: AppTheme.addPlayerBlue,
             fontSize: 16,
