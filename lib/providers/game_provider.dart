@@ -62,7 +62,7 @@ class GameNotifier extends StateNotifier<GameState> {
   void addPlayer(String name) {
     final trimmed = name.trim();
     if (trimmed.isEmpty) return;
-    if (state.players.length >= 6) return;
+    if (state.players.length >= 20) return;
     if (state.players.any((p) => p.toLowerCase() == trimmed.toLowerCase())) return;
     state = state.copyWith(players: [...state.players, trimmed]);
   }
@@ -75,7 +75,7 @@ class GameNotifier extends StateNotifier<GameState> {
 
   /// Start a new round: pick random word, random imposter, random reveal order.
   void startGame() {
-    if (state.players.length < 3 || state.players.length > 6) return;
+    if (state.players.length < 3 || state.players.length > 20) return;
 
     final word =
         secretWords[_random.nextInt(secretWords.length)];

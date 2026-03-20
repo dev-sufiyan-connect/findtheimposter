@@ -33,8 +33,8 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(gameProvider);
     final players = state.players;
-    final canStart = players.length >= 3 && players.length <= 6;
-    final isFull = players.length >= 6;
+    final canStart = players.length >= 3 && players.length <= 20;
+    final isFull = players.length >= 20;
 
     return Scaffold(
       body: Container(
@@ -275,7 +275,7 @@ class _PlayerSetupScreenState extends ConsumerState<PlayerSetupScreen> {
               child: Text(
                 players.length < 3
                     ? 'Add at least ${3 - players.length} more player(s).'
-                    : 'Maximum 6 players.',
+                    : 'Maximum 20 players.',
                 style: const TextStyle(
                   color: AppTheme.titleImposter,
                   fontSize: 12,
